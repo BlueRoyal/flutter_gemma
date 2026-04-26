@@ -1,3 +1,35 @@
+## 0.13.6
+- **ModelType.qwen3**: New model type for Qwen3 models with thinking support
+- **Disable Qwen3 thinking at model level**: `/no_think` appended automatically when `isThinking: false` — faster TTFT
+- **Configurable maxFunctionBufferLength** (#229): `createChat(maxFunctionBufferLength: 2048)` for long function call args
+- **Fix Windows path parsing** (#233): `FileSource` now handles backslash paths correctly
+- **removeDocument** (#232): `VectorStoreRepository.removeDocument(id:)` to delete documents from vector store
+
+## 0.13.5
+- **Fix Qwen3 thinking mode (#224)**: Qwen3 `<think>` tags now stripped automatically
+
+## 0.13.4
+- **Fix iOS compile error (#222)**: XNNPack delegate type mismatch in `EmbeddingModel.swift`
+- **Fix iOS arm64 simulator (#216)**: Removed `TensorFlowLiteSelectTfOps` — simulator builds work on Apple Silicon
+
+## 0.13.3
+- **Fix macOS SIGSEGV (#219)**: Per-conversation mutex in gRPC server prevents `conversation.close()` racing with `sendMessageAsync` on a native thread → use-after-free in C++ fixed
+- **Fix macOS desktop Metal accelerator**: `setup_desktop.sh` now downloads `libLiteRtMetalAccelerator.dylib` from GitHub Release so GPU inference uses the Metal delegate instead of falling back to static C API
+- **Fix iOS pod install hanging (#220)**: Replaced `TensorFlowLiteSwift` (source pod — cloned entire TensorFlow repo) with direct `TensorFlowLiteC` C API in `EmbeddingModel.swift`
+- **Fix Windows >2 GB model error (#212)**: Clear error message when model file exceeds 2 GB on Windows (known upstream 32-bit stat() overflow in litertlm_jni.dll, google-ai-edge/LiteRT-LM#1494)
+- **Fix iOS arm64 simulator build (#216)**: Excluded arm64 from simulator archs to fix build on Apple Silicon Macs
+
+## 0.13.2
+- **FileSource absolute paths**: Accept both Unix (`/path`) and Windows (`C:\path`) absolute paths in FileSource validation
+- **Package metadata**: Updated pubspec description to reflect current feature set (desktop, vision, audio, function calling, embeddings, on-device RAG)
+- **Desktop CI**: Added Linux smoke tests for gRPC server integration
+
+## 0.13.1
+- **LiteRT-LM 0.10.0**: Updated Android and JVM SDK from 0.9.0 to 0.10.0
+- **Gemma 4 Thinking Mode**: `isThinking: true` now works with Gemma 4 E2B/E4B models (Android, iOS, Desktop; not Web)
+- **Fix cancel download**: Cancel download now works correctly (#196)
+- **Fix `large_file_handler` platform support**: Conditional imports for pub.dev platform analysis compatibility
+
 ## 0.13.0
 - **Gemma 4 E2B/E4B**: Added support for next-gen multimodal models (text + image + audio)
 - **systemInstruction**: New parameter in `createChat()` and `createSession()` for setting system-level context

@@ -6,9 +6,9 @@
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/flutter_gemma)
 
-**The plugin supports not only Gemma, but also other models. Here's the full list of supported models:** [Gemma 4 E2B/E4B](https://huggingface.co/google/gemma-4-E2B-it-litert-lm), [Gemma3n E2B/E4B](https://huggingface.co/google/gemma-3n-E2B-it-litert-preview), [FastVLM 0.5B](https://huggingface.co/litert-community/FastVLM-0.5B), [Gemma-3 1B](https://huggingface.co/litert-community/Gemma3-1B-IT), [Gemma 3 270M](https://huggingface.co/litert-community/gemma-3-270m-it), [FunctionGemma 270M](https://huggingface.co/sasha-denisov/function-gemma-270M-it), [Qwen3 0.6B](https://huggingface.co/litert-community/Qwen3-0.6B), [Qwen 2.5](https://huggingface.co/litert-community/Qwen2.5-1.5B-Instruct), [Phi-4 Mini](https://huggingface.co/litert-community/Phi-4-mini-instruct), [DeepSeek R1](https://huggingface.co/litert-community/DeepSeek-R1-Distill-Qwen-1.5B), [SmolLM 135M](https://huggingface.co/litert-community/SmolLM-135M-Instruct).
+**The plugin supports not only Gemma, but also other models. Here's the full list of supported models:** [Gemma 4 E2B/E4B](https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm), [Gemma3n E2B/E4B](https://huggingface.co/google/gemma-3n-E2B-it-litert-preview), [FastVLM 0.5B](https://huggingface.co/litert-community/FastVLM-0.5B), [Gemma-3 1B](https://huggingface.co/litert-community/Gemma3-1B-IT), [Gemma 3 270M](https://huggingface.co/litert-community/gemma-3-270m-it), [FunctionGemma 270M](https://huggingface.co/sasha-denisov/function-gemma-270M-it), [Qwen3 0.6B](https://huggingface.co/litert-community/Qwen3-0.6B), [Qwen 2.5](https://huggingface.co/litert-community/Qwen2.5-1.5B-Instruct), [Phi-4 Mini](https://huggingface.co/litert-community/Phi-4-mini-instruct), [DeepSeek R1](https://huggingface.co/litert-community/DeepSeek-R1-Distill-Qwen-1.5B), [SmolLM 135M](https://huggingface.co/litert-community/SmolLM-135M-Instruct).
 
-*Note: The flutter_gemma plugin supports Gemma3n (with **multimodal vision and audio support**), FastVLM (vision), Gemma-3, FunctionGemma, Qwen3, Qwen 2.5, Phi-4, DeepSeek R1 and SmolLM. Desktop platforms (macOS, Windows, Linux) require `.litertlm` model format.
+*Note: The flutter_gemma plugin supports Gemma 4 and Gemma3n (with **multimodal vision and audio support**), FastVLM (vision), Gemma-3, FunctionGemma, Qwen3, Qwen 2.5, Phi-4, DeepSeek R1 and SmolLM. Desktop platforms (macOS, Windows, Linux) require `.litertlm` model format.
 
 [Gemma](https://ai.google.dev/gemma) is a family of lightweight, state-of-the art open models built from the same research and technology used to create the Gemini models
 
@@ -32,7 +32,7 @@ There is an example of using:
 - **🖼️ Multimodal Support:** Text + Image input with Gemma3n vision models
 - **🎙️ Audio Input:** Record and send audio messages with Gemma3n E2B/E4B models (Android, Desktop - LiteRT-LM engine)
 - **🛠️ Function Calling:** Enable your models to call external functions and integrate with other services (supported by select models)
-- **🧠 Thinking Mode:** View the reasoning process of DeepSeek models with <think> blocks 
+- **🧠 Thinking Mode:** View the reasoning process of DeepSeek and Gemma 4 models with thinking blocks
 - **🛑 Stop Generation:** Cancel text generation mid-process on Android, Web, and Desktop
 - **⚙️ Backend Switching:** Choose between CPU and GPU backends for each model individually in the example app 
 - **🔍 Advanced Model Filtering:** Filter models by features (Multimodal, Function Calls, Thinking) with expandable UI
@@ -52,7 +52,7 @@ Flutter Gemma supports different model file formats, which are grouped into **tw
 
 ### Type 1: MediaPipe-Managed Templates
 - **`.task` files:** MediaPipe-optimized format for mobile (Android/iOS)
-- **`.litertlm` files:** LiteRT-LM format for Android (NPU) and Desktop platforms
+- **`.litertlm` files:** LiteRT-LM format for Android, iOS, and Desktop platforms
 
 Both formats have **identical behavior** — MediaPipe handles chat templates internally.
 
@@ -66,19 +66,31 @@ Both formats require **manual chat template formatting** in your code.
 - Use `ModelFileType.task` for `.task` and `.litertlm` files (same behavior)
 - Use `ModelFileType.binary` for `.bin` and `.tflite` files (same behavior)
 
+### Format by Platform
+
+| Format | Android | iOS | Web | Desktop | Use Case |
+|--------|:-------:|:---:|:---:|:-------:|----------|
+| `.task` | ✅ | ✅ | ✅ | ❌ | Older models (Gemma3n, Gemma 3, DeepSeek, Qwen 2.5, Phi-4) |
+| `.litertlm` | ✅ | ⚠️ ¹ | ❌ | ✅ | Newer models (Gemma 4, Qwen3, FastVLM + desktop for all) |
+| `-web.task` | ❌ | ❌ | ✅ | ❌ | Web-specific builds (e.g. Gemma 4, Gemma3n) |
+| `.bin` | ✅ | ✅ | ✅ | ❌ | Manual chat template formatting required |
+| `.tflite` | ✅ | ✅ | ✅ | ✅ | Embeddings only (EmbeddingGemma, Gecko) |
+
+> ¹ iOS `.litertlm` — text only, no vision or audio support
+
 ## Model Capabilities
 
 The example app offers a curated list of models, each suited for different tasks. Here's a breakdown of the models available and their capabilities:
 
 | Model Family | Best For | Function Calling | Thinking Mode | Vision | Languages | Size |
 |---|---|:---:|:---:|:---:|---|---|
-| **Gemma 4 E2B** | Next-gen multimodal chat — text, image, audio | ✅ | ❌ | ✅ | Multilingual | 2.4GB |
-| **Gemma 4 E4B** | Next-gen multimodal chat — text, image, audio | ✅ | ❌ | ✅ | Multilingual | 4.3GB |
+| **Gemma 4 E2B** | Next-gen multimodal chat — text, image, audio | ✅ | ✅ | ✅ | Multilingual | 2.4GB |
+| **Gemma 4 E4B** | Next-gen multimodal chat — text, image, audio | ✅ | ✅ | ✅ | Multilingual | 4.3GB |
 | **Gemma3n** | On-device multimodal chat and image analysis | ✅ | ❌ | ✅ | Multilingual | 3-6GB |
 | **FastVLM 0.5B** | Fast vision-language inference | ❌ | ❌ | ✅ | Multilingual | 0.5GB |
 | **Phi-4 Mini** | Advanced reasoning and instruction following | ✅ | ❌ | ❌ | Multilingual | 3.9GB |
 | **DeepSeek R1** | High-performance reasoning and code generation | ✅ | ✅ | ❌ | Multilingual | 1.7GB |
-| **Qwen3 0.6B** | Compact multilingual chat with function calling | ✅ | ❌ | ❌ | Multilingual | 586MB |
+| **Qwen3 0.6B** | Compact multilingual chat with function calling | ✅ | ✅ | ❌ | Multilingual | 586MB |
 | **Qwen 2.5** | Strong multilingual chat and instruction following | ✅ | ❌ | ❌ | Multilingual | 0.5-1.6GB |
 | **Gemma 3 1B** | Balanced and efficient text generation | ❌ | ❌ | ❌ | Multilingual | 0.5GB |
 | **Gemma 3 270M** | Ideal for fine-tuning (LoRA) for specific tasks | ❌ | ❌ | ❌ | Multilingual | 0.3GB |
@@ -178,27 +190,6 @@ platform :ios, '16.0'  # Required for MediaPipe GenAI
 * **Change the linking type** of pods to static in `Podfile`:
 ```ruby
 use_frameworks! :linkage => :static
-```
-
-* **For embedding models**, add force_load to `Podfile`'s post_install hook:
-```ruby
-post_install do |installer|
-  installer.pods_project.targets.each do |target|
-    flutter_additional_ios_build_settings(target)
-
-    # Required for embedding models (TensorFlow Lite SelectTfOps)
-    if target.name == 'Runner'
-      target.build_configurations.each do |config|
-        sdk = config.build_settings['SDKROOT']
-        if sdk.nil? || !sdk.include?('simulator')
-          config.build_settings['OTHER_LDFLAGS'] ||= ['$(inherited)']
-          config.build_settings['OTHER_LDFLAGS'] << '-force_load'
-          config.build_settings['OTHER_LDFLAGS'] << '$(PODS_ROOT)/TensorFlowLiteSelectTfOps/Frameworks/TensorFlowLiteSelectTfOps.xcframework/ios-arm64/TensorFlowLiteSelectTfOps.framework/TensorFlowLiteSelectTfOps'
-        end
-      end
-    end
-  end
-end
 ```
 
 **Android**
@@ -1544,11 +1535,13 @@ FunctionGemma uses a special format (different from JSON-based function calling)
 
 The `flutter_gemma` plugin handles this format automatically via `FunctionCallParser`.
 
-9. **🧠 Thinking Mode (DeepSeek Models)**
+9. **🧠 Thinking Mode (DeepSeek, Qwen3 & Gemma 4 Models)**
 
-DeepSeek models support "thinking mode" where you can see the model's reasoning process before it generates the final response. This provides transparency into how the model approaches problems.
+DeepSeek, Qwen3, and Gemma 4 (E2B/E4B) models support "thinking mode" where you can see the model's reasoning process before it generates the final response. This provides transparency into how the model approaches problems.
 
-**Enable Thinking Mode:**
+> **Note:** Qwen3 generates thinking blocks by default. When `isThinking: false`, thinking content is automatically stripped from the response. Set `isThinking: true` to see the reasoning process.
+
+**Enable Thinking Mode (DeepSeek):**
 
 ```dart
 final chat = await inferenceModel.createChat(
@@ -1559,7 +1552,6 @@ final chat = await inferenceModel.createChat(
   modelType: ModelType.deepSeek, // Required for DeepSeek models
   supportsFunctionCalls: true, // DeepSeek also supports function calls
   tools: _tools, // Optional: add tools for function calling
-  // tokenBuffer: 256, // Token buffer for context management
 );
 ```
 
@@ -1586,12 +1578,25 @@ chat.generateChatResponseAsync().listen((response) {
 });
 ```
 
+**Enable Thinking Mode (Gemma 4):**
+
+```dart
+final chat = await inferenceModel.createChat(
+  temperature: 1.0,
+  topK: 64,
+  topP: 0.95,
+  isThinking: true, // Enable thinking mode
+  modelType: ModelType.gemmaIt, // Gemma 4 E2B/E4B
+);
+// <|think|> is auto-injected into systemInstruction — no manual prompt needed.
+```
+
 **Thinking Mode Features:**
 - ✅ **Transparent Reasoning**: See how the model thinks through problems
 - ✅ **Interactive UI**: Show/hide thinking bubbles with expandable content
 - ✅ **Streaming Support**: Thinking content streams in real-time
 - ✅ **Function Integration**: Models can think before calling functions
-- ✅ **DeepSeek Optimized**: Designed specifically for DeepSeek model architecture
+- ✅ **Supported Models**: DeepSeek R1 and Gemma 4 E2B/E4B
 
 **Example Thinking Flow:**
 1. User asks: "Change the background to blue and explain why blue is calming"
@@ -2096,7 +2101,7 @@ Function calling is currently supported by the following models:
 | **Image Input (Multimodal)** | ✅ Full | ✅ Full | ✅ Full | ⚠️ Broken (#684) | macOS: model hallucinates |
 | **Audio Input** | ✅ Full | ✅ Full | ❌ Not supported | ✅ Full | Gemma3n E2B/E4B |
 | **Function Calling** | ✅ Full | ✅ Full | ✅ Full | ❌ Not supported | LiteRT-LM limitation |
-| **Thinking Mode** | ✅ Full | ✅ Full | ✅ Full | ❌ Not supported | DeepSeek models |
+| **Thinking Mode** | ✅ Full | ✅ Full | ✅ Full | ✅ Full | DeepSeek & Gemma 4 |
 | **Stop Generation** | ✅ Full | ✅ Full | ✅ Full | ✅ Full | Cancel mid-process |
 | **GPU Acceleration** | ✅ Full | ✅ Full | ✅ Full | ⚠️ Partial | macOS GPU broken |
 | **NPU Acceleration** | ✅ Full | ❌ Not supported | ❌ Not supported | ❌ Not supported | Android only (.litertlm) |
@@ -2189,7 +2194,7 @@ final supported = await FlutterGemma.isStreamingSupported();
 - **Memory entitlements:** Required for large models (see Setup section)
 - **Linking:** Static linking required (`use_frameworks! :linkage => :static`)
 - **Storage:** Local file system in app documents directory
-- **Embedding models:** Require force_load for TensorFlowLiteSelectTfOps in Podfile (see Setup section)
+- **Embedding models:** Supported via TensorFlowLiteC — no extra Podfile configuration needed
 
 The full and complete example you can find in `example` folder
 
@@ -2230,29 +2235,6 @@ The full and complete example you can find in `example` folder
 - Clean and reinstall pods: `cd ios && pod install --repo-update`
 - Check that all required entitlements are in `Runner.entitlements`
 
-**iOS Embedding Models:**
-For embedding models on iOS, you must add force_load to your Podfile's post_install hook:
-
-```ruby
-post_install do |installer|
-  installer.pods_project.targets.each do |target|
-    flutter_additional_ios_build_settings(target)
-
-    # Required for embedding models
-    if target.name == 'Runner'
-      target.build_configurations.each do |config|
-        sdk = config.build_settings['SDKROOT']
-        if sdk.nil? || !sdk.include?('simulator')
-          config.build_settings['OTHER_LDFLAGS'] ||= ['$(inherited)']
-          config.build_settings['OTHER_LDFLAGS'] << '-force_load'
-          config.build_settings['OTHER_LDFLAGS'] << '$(PODS_ROOT)/TensorFlowLiteSelectTfOps/Frameworks/TensorFlowLiteSelectTfOps.xcframework/ios-arm64/TensorFlowLiteSelectTfOps.framework/TensorFlowLiteSelectTfOps'
-        end
-      end
-    end
-  end
-end
-```
-
 ## Advanced Usage
 
 ### ModelThinkingFilter (Advanced)
@@ -2264,13 +2246,14 @@ import 'package:flutter_gemma/core/extensions.dart';
 
 // Clean response based on model type
 String cleanedResponse = ModelThinkingFilter.cleanResponse(
-  rawResponse, 
+  rawResponse,
   ModelType.deepSeek
 );
 
 // The filter automatically removes model-specific tokens like:
 // - <end_of_turn> tags (Gemma models)
-// - Special DeepSeek tokens
+// - <think>...</think> blocks (DeepSeek)
+// - <|channel>thought\n...<channel|> blocks (Gemma 4 E2B/E4B)
 // - Extra whitespace and formatting
 ```
 

@@ -52,13 +52,16 @@ extension type SQLiteVectorStore._(JSObject _) implements JSObject {
 
   external JSPromise<JSAny?> getStats();
 
+  external JSPromise<JSAny?> removeDocument(String id);
+
   external JSPromise<JSAny?> clear();
 
   external JSPromise<JSAny?> close();
 
   external JSPromise<JSArray<JSObject>> getAllDocumentsWithEmbeddings();
 
-  external JSPromise<JSArray<JSObject>> getDocumentsByIds(JSArray<JSString> ids);
+  external JSPromise<JSArray<JSObject>> getDocumentsByIds(
+      JSArray<JSString> ids);
 
   // ========================================================================
   // Dart Helper Methods (type conversion wrappers)
@@ -67,8 +70,8 @@ extension type SQLiteVectorStore._(JSObject _) implements JSObject {
   /// Add document with embedding (Dart-friendly API)
   ///
   /// Type conversions:
-  /// - Dart List<double> → JS Array<JSNumber>
-  /// - Dart String? → JS String | null
+  /// - Dart `List<double>` → JS `Array<JSNumber>`
+  /// - Dart `String?` → JS `String | null`
   ///
   /// Throws:
   /// - Dimension mismatch
@@ -83,13 +86,18 @@ extension type SQLiteVectorStore._(JSObject _) implements JSObject {
     await addDocument(id, content, jsEmbedding, metadata).toDart;
   }
 
+  /// Remove a document by ID (Dart-friendly API)
+  Future<void> removeDocumentDart(String id) async {
+    await removeDocument(id).toDart;
+  }
+
   /// Search for similar documents (Dart-friendly API)
   ///
   /// Type conversions:
-  /// - Dart List<double> → JS Array<JSNumber>
+  /// - Dart `List<double>` → JS `Array<JSNumber>`
   /// - Dart int → JS Number
   /// - Dart double → JS Number
-  /// - JS Array<JSObject> → Dart List<RetrievalResult>
+  /// - JS `Array<JSObject>` → Dart `List<RetrievalResult>`
   ///
   /// Returns:
   /// - List sorted by similarity (descending)
@@ -133,7 +141,8 @@ extension type SQLiteVectorStore._(JSObject _) implements JSObject {
   /// Get all documents with embeddings for HNSW rebuild (Dart-friendly API)
   ///
   /// Used during initialize() to rebuild in-memory HNSW index
-  Future<List<DocumentWithEmbedding>> getAllDocumentsWithEmbeddingsDart() async {
+  Future<List<DocumentWithEmbedding>>
+      getAllDocumentsWithEmbeddingsDart() async {
     final jsResults = await getAllDocumentsWithEmbeddings().toDart;
 
     return jsResults.toDart
@@ -200,5 +209,4 @@ extension type SQLiteVectorStore._(JSObject _) implements JSObject {
       metadata: metadata.isNull ? null : (metadata as JSString).toDart,
     );
   }
-
 }
